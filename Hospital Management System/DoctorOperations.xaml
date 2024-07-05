@@ -1,0 +1,15 @@
+﻿<Window x:Class="Hospital_Management_System.DoctorOperations"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Hospital_Management_System"
+        mc:Ignorable="d"
+        Title="DoctorOperations" Height="450" Width="800" Loaded="Window_Loaded">
+    <Grid>
+        <DataGrid x:Name="datagrid" Margin="0,0,0,309"/>
+        <ComboBox x:Name="cmbAddClinic" HorizontalAlignment="Left" Margin="30,176,0,0" VerticalAlignment="Top" Width="120"/>
+        <TextBox  x:Name="tboxAddDoctorName" HorizontalAlignment="Left" Margin="30,235,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="btnAddDoctor" Content="Add" HorizontalAlignment="Left" Margin="37,288,0,0" VerticalAlignment="Top" Height="35" Width="106" Click="btnAddDoctor_Click"/>
+    </Grid>
+</Window>
