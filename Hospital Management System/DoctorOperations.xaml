@@ -7,9 +7,16 @@
         mc:Ignorable="d"
         Title="DoctorOperations" Height="450" Width="800" Loaded="Window_Loaded">
     <Grid>
-        <DataGrid x:Name="datagrid" Margin="0,0,0,309"/>
+        <DataGrid x:Name="datagrid" Margin="30,10,34,299" SelectionChanged="datagrid_SelectionChanged"/>
         <ComboBox x:Name="cmbAddClinic" HorizontalAlignment="Left" Margin="30,176,0,0" VerticalAlignment="Top" Width="120"/>
         <TextBox  x:Name="tboxAddDoctorName" HorizontalAlignment="Left" Margin="30,235,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
         <Button x:Name="btnAddDoctor" Content="Add" HorizontalAlignment="Left" Margin="37,288,0,0" VerticalAlignment="Top" Height="35" Width="106" Click="btnAddDoctor_Click"/>
+        <TextBox  x:Name="tboxDeleteDoctorName" HorizontalAlignment="Left" Margin="213,235,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="btnDeleteDoctor" Content="Delete" HorizontalAlignment="Left" Margin="220,288,0,0" VerticalAlignment="Top" Height="35" Width="106" Click="btnDeleteDoctor_Click"/>
+        <TextBox  x:Name="tboxUpdateDoctor" HorizontalAlignment="Left" Margin="393,235,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="btnUpdateDoctor" Content="Update" HorizontalAlignment="Left" Margin="400,288,0,0" VerticalAlignment="Top" Height="35" Width="106" Click="btnUpdateDoctor_Click"/>
+        <Button x:Name="btnFilter" Content="Filter" HorizontalAlignment="Left" Margin="636,288,0,0" VerticalAlignment="Top" Height="35" Width="106" Click="btnFilter_Click"/>
+        <ComboBox x:Name="cmbFilter" HorizontalAlignment="Left" Margin="629,187,0,0" VerticalAlignment="Top" Width="120"/>
+        <TextBox  x:Name="tboxFilter" HorizontalAlignment="Left" Margin="629,244,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
     </Grid>
 </Window>
