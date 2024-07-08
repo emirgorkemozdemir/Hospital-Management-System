@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="PatientOperations" Height="450" Width="800" Loaded="Window_Loaded">
     <Grid>
-        <DataGrid x:Name="datagrid" Margin="0,10,0,301" HorizontalAlignment="Center" Width="780"/>
+        <DataGrid x:Name="datagrid" Margin="0,10,0,301" HorizontalAlignment="Center" Width="780" SelectionChanged="datagrid_SelectionChanged"/>
         <ComboBox x:Name="cmbBlood" HorizontalAlignment="Left" Margin="4,221,0,0" VerticalAlignment="Top" Width="120"/>
         <ComboBox x:Name="cmbGender" HorizontalAlignment="Left" Margin="4,252,0,0" VerticalAlignment="Top" Width="120"/>
         <DatePicker x:Name="datepicker" HorizontalAlignment="Left" Margin="4,284,0,0" VerticalAlignment="Top" Height="25" Width="120"/>
@@ -15,6 +15,16 @@
         <TextBox x:Name="tboxNameSurname" HorizontalAlignment="Left" Margin="4,192,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
         <TextBox x:Name="tboxPhone" HorizontalAlignment="Left" Margin="4,314,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
         <Button x:Name="btnAddPatient" Content="Add New Patient" HorizontalAlignment="Left" Margin="10,337,0,0" VerticalAlignment="Top" Height="30" Width="108" Click="btnAddPatient_Click"/>
+        <TextBox x:Name="tboxFilter" HorizontalAlignment="Left" Margin="188,187,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="btnFilter" Content="Filter By TC" HorizontalAlignment="Left" Margin="194,243,0,0" VerticalAlignment="Top" Height="30" Width="108" Click="btnFilter_Click"/>
+        <TextBox x:Name="tboxDelete" HorizontalAlignment="Left" Margin="373,187,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="btnDelete" Content="Delete" HorizontalAlignment="Left" Margin="379,243,0,0" VerticalAlignment="Top" Height="30" Width="108" Click="btnDelete_Click"/>
+        <ComboBox x:Name="cboxClinics" HorizontalAlignment="Left" Margin="611,169,0,0" VerticalAlignment="Top" Width="160" SelectionChanged="cboxClinics_SelectionChanged"/>
+        <ComboBox x:Name="cboxDoctors" HorizontalAlignment="Left" Margin="611,0,0,0" VerticalAlignment="Center" Width="160"/>
+        <TextBox x:Name="tboxAppointmentPatient" HorizontalAlignment="Left" Margin="611,314,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="160" Height="22"/>
+        <ComboBox x:Name="cboxHour" HorizontalAlignment="Left" Margin="611,275,0,0" VerticalAlignment="Top" Width="160" DropDownOpened="cboxHour_DropDownOpened" />
+        <DatePicker x:Name="datepickerappointment" HorizontalAlignment="Left" Margin="611,239,0,0" VerticalAlignment="Top" Width="160"/>
+        <Button x:Name="btnAddAppointment" Content="Add Appointment" HorizontalAlignment="Left" Margin="611,352,0,0" VerticalAlignment="Top" Width="160" Click="btnAddAppointment_Click"/>
 
     </Grid>
 </Window>
