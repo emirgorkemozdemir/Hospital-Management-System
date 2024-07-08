@@ -8,6 +8,7 @@
         Title="Main" Height="450" Width="800">
     <Grid>
         <Button x:Name="btnClinic" Content="Clinic Operations" HorizontalAlignment="Left" Margin="129,69,0,0" VerticalAlignment="Top" Height="64" Width="185" FontSize="18" Click="btnClinic_Click"/>
+        <Button x:Name="btnDoctor" Content="Doctor Operations" HorizontalAlignment="Left" Margin="129,217,0,0" VerticalAlignment="Top" Height="64" Width="185" FontSize="18" Click="btnDoctor_Click"/>
 
     </Grid>
 </Window>

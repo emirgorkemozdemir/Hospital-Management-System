@@ -17,6 +17,7 @@
         <Label Content="Update Clinic" HorizontalAlignment="Left" Margin="566,0,0,0" VerticalAlignment="Center" Width="120" FontSize="16"/>
         <TextBox x:Name="tboxUpdateClinicName" HorizontalAlignment="Left" Margin="566,252,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
         <Button x:Name="btnUpdateClinic" Content="Update" HorizontalAlignment="Left" Margin="566,295,0,0" VerticalAlignment="Top" Height="33" Width="94" Click="btnUpdateClinic_Click"/>
+        <Button x:Name="btnBack" Content="Go To Previous Page" HorizontalAlignment="Left" Margin="304,366,0,0" VerticalAlignment="Top" Height="40" Width="128" Click="btnBack_Click"/>
 
     </Grid>
 </Window>

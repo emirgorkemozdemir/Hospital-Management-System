@@ -82,6 +82,13 @@ namespace Hospital_Management_System
             command_update_clinic.ExecuteNonQuery();
             GetClinics();
         }
+
+        private void btnBack_Click(object sender, RoutedEventArgs e)
+        {
+            Main new_window = new Main();
+            new_window.Show();
+            this.Hide();
+        }
     }
 }
  

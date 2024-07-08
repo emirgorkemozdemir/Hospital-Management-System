@@ -30,5 +30,12 @@ namespace Hospital_Management_System
             new_window.Show();
             this.Hide();
         }
+
+        private void btnDoctor_Click(object sender, RoutedEventArgs e)
+        {
+            DoctorOperations new_window = new DoctorOperations();
+            new_window.Show();
+            this.Hide();
+        }
     }
 }

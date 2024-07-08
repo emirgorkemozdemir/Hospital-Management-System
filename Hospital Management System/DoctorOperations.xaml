@@ -18,5 +18,6 @@
         <Button x:Name="btnFilter" Content="Filter" HorizontalAlignment="Left" Margin="636,288,0,0" VerticalAlignment="Top" Height="35" Width="106" Click="btnFilter_Click"/>
         <ComboBox x:Name="cmbFilter" HorizontalAlignment="Left" Margin="629,187,0,0" VerticalAlignment="Top" Width="120"/>
         <TextBox  x:Name="tboxFilter" HorizontalAlignment="Left" Margin="629,244,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="btnBack" Content="Go Previous Page" HorizontalAlignment="Left" Margin="325,375,0,0" VerticalAlignment="Top" Height="33" Width="146" Click="btnBack_Click"/>
     </Grid>
 </Window>

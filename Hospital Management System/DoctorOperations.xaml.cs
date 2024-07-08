@@ -56,8 +56,16 @@ namespace Hospital_Management_System
 
             cmbAddClinic.SelectedIndex = 0;
 
+            DataTable dataTable2 = new DataTable();
+            dataAdapter.Fill(dataTable2);
 
-            cmbFilter.ItemsSource = dataTable.DefaultView;
+            DataRow my_row = dataTable2.NewRow();
+            my_row["ClinicID"] = 0;
+            my_row["ClinicName"] = " ";
+            dataTable2.Rows.InsertAt(my_row,0);
+            
+            cmbFilter.ItemsSource = dataTable2.DefaultView;
+            
 
             // Display member gözüken değer için
             cmbFilter.DisplayMemberPath = "ClinicName";
@@ -153,6 +161,29 @@ namespace Hospital_Management_System
             datagrid.ItemsSource = data_table.DefaultView;
         }
 
+        private void FilterByDoctorName()
+        {
+            MyConnection.CheckConnection();
+            SqlCommand command_filter_by_name = new SqlCommand("SELECT DoctorID,DoctorNameSurname,ClinicName FROM TableDoctor INNER JOIN TableClinic ON ClinicID=DoctorClinicID WHERE DoctorNameSurname LIKE '%' + @pname + '%' ", MyConnection.connection);
+            command_filter_by_name.Parameters.AddWithValue("@pname",tboxFilter.Text);
+            SqlDataAdapter dataAdapter = new SqlDataAdapter(command_filter_by_name);
+            DataTable data_table = new DataTable();
+            dataAdapter.Fill(data_table);
+            datagrid.ItemsSource = data_table.DefaultView;
+        }
+
+        private void FilterByDoctorNameAndClinicID()
+        {
+            MyConnection.CheckConnection();
+            SqlCommand command_filter_by_name = new SqlCommand("SELECT DoctorID,DoctorNameSurname,ClinicName FROM TableDoctor INNER JOIN TableClinic ON ClinicID=DoctorClinicID WHERE DoctorNameSurname LIKE '%' + @pname + '%' AND DoctorClinicID=@pid ", MyConnection.connection);
+            command_filter_by_name.Parameters.AddWithValue("@pname", tboxFilter.Text);
+            command_filter_by_name.Parameters.AddWithValue("@pid", Convert.ToInt32(cmbFilter.SelectedValue));
+            SqlDataAdapter dataAdapter = new SqlDataAdapter(command_filter_by_name);
+            DataTable data_table = new DataTable();
+            dataAdapter.Fill(data_table);
+            datagrid.ItemsSource = data_table.DefaultView;
+        }
+
         private void btnFilter_Click(object sender, RoutedEventArgs e)
         {
             // Buranın mantığı şöyle işleyecek
@@ -167,22 +198,22 @@ namespace Hospital_Management_System
 
             // İkisi de boşsa tüm doktorlar ekrana yansıtılır.
 
-            if (tboxFilter.Text=="" && cmbFilter.SelectedValue!=null)
+            if (tboxFilter.Text=="" && cmbFilter.SelectedIndex!=0)
             {
                 // Burada kliniğe göre arama yapılacak
                 // Bir metot yazın, bu metotta cmbfilter'ın seçili değerine göre
                 // select yapın.
                 FilterByClinicID();
             }
-            else if (tboxFilter.Text!="" && cmbFilter.SelectedValue == null)
+            else if (tboxFilter.Text!="" && cmbFilter.SelectedIndex == 0)
             {
                 // Burada doktor ismine göre arama yapılacak
-                MessageBox.Show("Sadece doktor ismi yazıldı");
+                FilterByDoctorName();
             }
-            else if (tboxFilter.Text != "" && cmbFilter.SelectedValue!= null)
+            else if (tboxFilter.Text != "" && cmbFilter.SelectedIndex != 0)
             {
                 // Burada hem doktor ismine göre hem de kliniğe göre arama yapılacak
-                MessageBox.Show("Hem klinik seçildi hem doktor ismi yazıldı");
+                FilterByDoctorNameAndClinicID();
             }
             else
             {
@@ -190,6 +221,13 @@ namespace Hospital_Management_System
                 MessageBox.Show("İkisi de boş");
                 GetDoctors();
             }
+        }
+
+        private void btnBack_Click(object sender, RoutedEventArgs e)
+        {
+            Main new_window = new Main();
+            new_window.Show();
+            this.Hide();
         }
     }
 }
