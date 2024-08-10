@@ -5,9 +5,29 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Hospital_Management_System"
         mc:Ignorable="d"
-        Title="DoctorPanel" Height="450" Width="800">
+        Title="DoctorPanel" Height="450" Width="800" Loaded="Window_Loaded">
     <Grid>
-        <DataGrid x:Name="datagrid" Margin="0,0,583,0" />
+        <DataGrid x:Name="datagrid" Margin="0,0,434,0" SelectionChanged="datagrid_SelectionChanged"/>
+        <Label Content="Selected Appointment Patient" HorizontalAlignment="Left" Margin="387,10,0,0" VerticalAlignment="Top" Width="169"/>
+        <TextBox x:Name="tboxSelectedPatient" HorizontalAlignment="Left" Margin="387,41,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="btnDeleteAppointment" Content="Delete" HorizontalAlignment="Left" Margin="387,77,0,0" VerticalAlignment="Top" Width="93" Click="btnDeleteAppointment_Click"/>
+        <Label Content="Finish Appointment" HorizontalAlignment="Left" Margin="387,132,0,0" VerticalAlignment="Top" Width="169"/>
+        <RichTextBox x:Name="tboxText" Margin="387,163,221,61">
+            <FlowDocument>
+                <Paragraph>
+                    <Run Text=""/>
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
+        <RichTextBox x:Name="tboxPrescription" Margin="584,163,10,61">
+            <FlowDocument>
+                <Paragraph>
+                    <Run Text=""/>
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
+        <Button x:Name="btnDownload" Content="Download Files" HorizontalAlignment="Left" Margin="534,378,0,0" VerticalAlignment="Top" Height="41" Width="120"/>
+        <Button x:Name="btnFinish" Content="Finish Appointment" HorizontalAlignment="Left" Margin="387,383,0,0" VerticalAlignment="Top" Height="41" Width="120"/>
 
     </Grid>
 </Window>
