@@ -171,6 +171,8 @@ namespace Hospital_Management_System
             GetPatients();
             LoadComboBoxes();
             GetClinics();
+            // Metot yazın , bu metot ile bugünün tarihi öncesindeki tüm tarihleri kilitleyin.
+            datepickerappointment.DisplayDateStart = DateTime.Today;
         }
 
         private void btnAddPatient_Click(object sender, RoutedEventArgs e)
