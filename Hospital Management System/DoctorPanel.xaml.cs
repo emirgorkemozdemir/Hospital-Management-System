@@ -82,13 +82,33 @@ namespace Hospital_Management_System
             tboxSelectedPatient.Text=selected_appointment_patient;
         }
 
-        private void btnDeleteAppointment_Click(object sender, RoutedEventArgs e)
+        private void DeleteAppointment()
         {
             MyConnection.CheckConnection();
-            SqlCommand command_delete_appointment = new SqlCommand("DELETE FROM TableAppointment WHERE AppointmentID =@pid",MyConnection.connection);
-            command_delete_appointment.Parameters.AddWithValue("@pid",selected_appointment_id);
+            SqlCommand command_delete_appointment = new SqlCommand("DELETE FROM TableAppointment WHERE AppointmentID =@pid", MyConnection.connection);
+            command_delete_appointment.Parameters.AddWithValue("@pid", selected_appointment_id);
             command_delete_appointment.ExecuteNonQuery();
             LoadAppointments();
+        }
+
+        private void btnDeleteAppointment_Click(object sender, RoutedEventArgs e)
+        {
+            DeleteAppointment();
+        }
+
+        private void btnFinish_Click(object sender, RoutedEventArgs e)
+        {
+            MyConnection.CheckConnection();
+            SqlCommand command_finish_appointment = new SqlCommand("INSERT INTO TableAppointmentResult (AppointmentResultPatient,AppointmentResultDoctor,AppointmentResultClinic,AppointmentResultText,AppointmentResultPrescription,AppointmentID) VALUES (@ppatient,@pdoctor,@pclinic,@ptext,@ppres,@pappointment)",MyConnection.connection);
+            command_finish_appointment.Parameters.AddWithValue("@ppatient", selected_appointment_patient_tc);
+            command_finish_appointment.Parameters.AddWithValue("@pdoctor", selected_doctor_id);
+            command_finish_appointment.Parameters.AddWithValue("@pclinic", selected_doctor_clinic_id);
+            command_finish_appointment.Parameters.AddWithValue("@ptext", tboxText.Text);
+            command_finish_appointment.Parameters.AddWithValue("@ppres", tboxPrescription.Text);
+            command_finish_appointment.Parameters.AddWithValue("@pappointment", selected_appointment_id);
+            command_finish_appointment.ExecuteNonQuery();
+
+            DeleteAppointment();
         }
     }
 }
