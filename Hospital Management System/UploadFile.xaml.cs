@@ -66,7 +66,6 @@ namespace Hospital_Management_System
         {
             selected_appointment_id = ((datagrid.SelectedItem as DataRowView) == null) ? 0 : Convert.ToInt32((datagrid.SelectedItem as DataRowView)["AppointmentID"]);
             patient_tc = ((datagrid.SelectedItem as DataRowView) == null) ? "" : (datagrid.SelectedItem as DataRowView)["AppointmentPatient"].ToString();
-            MessageBox.Show(patient_tc.ToString());
         }
 
         private void upload()
@@ -127,6 +126,14 @@ namespace Hospital_Management_System
 
             string shareableLink = fileDetails.WebViewLink;
             tbox.Text = shareableLink;
+
+            MyConnection.CheckConnection();
+            SqlCommand command_add_file_to_db = new SqlCommand("INSERT INTO TableFile (FileLink,FileAppointment) VALUES (@plink,@papp)",MyConnection.connection);
+            command_add_file_to_db.Parameters.AddWithValue("@plink", shareableLink);
+            command_add_file_to_db.Parameters.AddWithValue("@papp", selected_appointment_id);
+            command_add_file_to_db.ExecuteNonQuery();
+
+            MessageBox.Show("File uploaded successfully");
         }
         public UploadFile()
         {

@@ -1,4 +1,6 @@
 ﻿using Hospital_Management_System.Classes;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -14,6 +16,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using OpenQA.Selenium.Support.UI;
+using System.Threading;
 
 namespace Hospital_Management_System
 {
@@ -55,14 +59,15 @@ namespace Hospital_Management_System
         private int GetClinicByID(int id)
         {
             MyConnection.CheckConnection();
-            SqlCommand command_GetClinicByID = new SqlCommand("SELECT DoctorClinicID FROM TableDoctor WHERE DoctorID=@pid",MyConnection.connection);
+            SqlCommand command_GetClinicByID = new SqlCommand("SELECT DoctorClinicID FROM TableDoctor WHERE DoctorID=@pid", MyConnection.connection);
             command_GetClinicByID.Parameters.AddWithValue("@pid", id);
             SqlDataReader dr = command_GetClinicByID.ExecuteReader();
             int selected_clinic_id = 0;
             while (dr.Read())
             {
-                selected_clinic_id= Convert.ToInt32(dr[0]);
+                selected_clinic_id = Convert.ToInt32(dr[0]);
             }
+            dr.Close();
             return selected_clinic_id;
         }
 
@@ -74,12 +79,12 @@ namespace Hospital_Management_System
         string selected_appointment_patient_tc = "";
         private void datagrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            selected_appointment_id = ((datagrid.SelectedItem as DataRowView) == null) ? 0 :Convert.ToInt32((datagrid.SelectedItem as DataRowView)["AppointmentID"]);
-            selected_appointment_patient = ((datagrid.SelectedItem as DataRowView) == null) ? "" :(datagrid.SelectedItem as DataRowView)["PatientNameSurname"].ToString();
-            selected_appointment_patient_tc = ((datagrid.SelectedItem as DataRowView) == null) ? "" :(datagrid.SelectedItem as DataRowView)["AppointmentPatient"].ToString();
+            selected_appointment_id = ((datagrid.SelectedItem as DataRowView) == null) ? 0 : Convert.ToInt32((datagrid.SelectedItem as DataRowView)["AppointmentID"]);
+            selected_appointment_patient = ((datagrid.SelectedItem as DataRowView) == null) ? "" : (datagrid.SelectedItem as DataRowView)["PatientNameSurname"].ToString();
+            selected_appointment_patient_tc = ((datagrid.SelectedItem as DataRowView) == null) ? "" : (datagrid.SelectedItem as DataRowView)["AppointmentPatient"].ToString();
             selected_doctor_id = ((datagrid.SelectedItem as DataRowView) == null) ? 0 : Convert.ToInt32((datagrid.SelectedItem as DataRowView)["AppointmentDoctor"]);
             selected_doctor_clinic_id = GetClinicByID(selected_doctor_id);
-            tboxSelectedPatient.Text=selected_appointment_patient;
+            tboxSelectedPatient.Text = selected_appointment_patient;
         }
 
         private void DeleteAppointment()
@@ -99,7 +104,7 @@ namespace Hospital_Management_System
         private void btnFinish_Click(object sender, RoutedEventArgs e)
         {
             MyConnection.CheckConnection();
-            SqlCommand command_finish_appointment = new SqlCommand("INSERT INTO TableAppointmentResult (AppointmentResultPatient,AppointmentResultDoctor,AppointmentResultClinic,AppointmentResultText,AppointmentResultPrescription,AppointmentID) VALUES (@ppatient,@pdoctor,@pclinic,@ptext,@ppres,@pappointment)",MyConnection.connection);
+            SqlCommand command_finish_appointment = new SqlCommand("INSERT INTO TableAppointmentResult (AppointmentResultPatient,AppointmentResultDoctor,AppointmentResultClinic,AppointmentResultText,AppointmentResultPrescription,AppointmentID) VALUES (@ppatient,@pdoctor,@pclinic,@ptext,@ppres,@pappointment)", MyConnection.connection);
             command_finish_appointment.Parameters.AddWithValue("@ppatient", selected_appointment_patient_tc);
             command_finish_appointment.Parameters.AddWithValue("@pdoctor", selected_doctor_id);
             command_finish_appointment.Parameters.AddWithValue("@pclinic", selected_doctor_clinic_id);
@@ -109,6 +114,79 @@ namespace Hospital_Management_System
             command_finish_appointment.ExecuteNonQuery();
 
             DeleteAppointment();
+        }
+
+        private async void btnDownload_Click(object sender, RoutedEventArgs e)
+        {
+            MyConnection.CheckConnection();
+            SqlCommand command_get_files = new SqlCommand("SELECT FileLink FROM TableFile WHERE FileAppointment=@papp", MyConnection.connection);
+            command_get_files.Parameters.AddWithValue("@papp", selected_appointment_id);
+            SqlDataReader dataReader = command_get_files.ExecuteReader();
+            List<string> links = new List<string>();
+            while (dataReader.Read())
+            {
+                links.Add(dataReader[0].ToString());
+            }
+
+            dataReader.Close();
+
+            using (IWebDriver driver = new ChromeDriver())
+            {
+                // İlk URL'yi aç (ilk sekme)
+                driver.Navigate().GoToUrl(links[0]);
+
+                // Diğer URL'leri yeni sekmelerde aç
+                for (int i = 1; i < links.Count; i++)
+                {
+                    // Yeni bir sekme aç ve ona geç
+                    ((IJavaScriptExecutor)driver).ExecuteScript("window.open();");
+                    driver.SwitchTo().Window(driver.WindowHandles[i]);
+
+                    // Yeni sekmede URL'yi aç
+                    driver.Navigate().GoToUrl(links[i]);
+                }
+
+
+                var task = Task.Run(() => MonitorBrowserClosure(driver));
+
+                Console.WriteLine("Tarayıcıyı kapatmak için Enter'a basın...");
+                Console.ReadLine();
+
+                // Kullanıcıdan giriş alındığında iptal sinyali gönder
+                driver.Quit(); // Tarayıcıyı kapat
+                await task; // Bekleme görevini sonlandır
+
+
+            }
+
+
+        }
+
+        static async Task MonitorBrowserClosure(IWebDriver driver)
+        {
+            try
+            {
+                var wait = new WebDriverWait(driver, TimeSpan.FromMinutes(10)); // Bekleme süresini ihtiyaca göre ayarlayın
+
+                wait.Until(drv =>
+                {
+                    try
+                    {
+                        return drv.WindowHandles.Count == 0;
+                    }
+                    catch (WebDriverException)
+                    {
+                        // Bağlantı kesilmişse, WebDriverException fırlatılır
+                        return true;
+                    }
+                });
+
+                Console.WriteLine("Tarayıcı kapalı veya bağlantı kesildi.");
+            }
+            catch (WebDriverTimeoutException)
+            {
+                Console.WriteLine("Bekleme süresi doldu ve tarayıcı hala açık.");
+            }
         }
     }
 }
