@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -18,6 +20,7 @@ using Google.Apis.Drive.v3;
 using Google.Apis.Drive.v3.Data;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
+using Hospital_Management_System.Classes;
 using Microsoft.Win32;
 using Path = System.IO.Path;
 
@@ -33,13 +36,42 @@ namespace Hospital_Management_System
         string credentialsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "credentials.json");
        
 
-        string patient_tc = "12345678900";
-        string appointment_date = "120824";
-        int clinic_id = 0;
+        private void GetAppointmentsByTC()
+        {
+            MyConnection.CheckConnection();
+            SqlCommand command_GetAppointmentsByTC = new SqlCommand("SELECT * FROM TableAppointment WHERE AppointmentPatient = @ptc",MyConnection.connection);
+            command_GetAppointmentsByTC.Parameters.AddWithValue("@ptc",tboxTC.Text);
+            SqlDataAdapter dataAdapter = new SqlDataAdapter(command_GetAppointmentsByTC);
+            DataTable dataTable = new DataTable();
+            dataAdapter.Fill(dataTable);
+            datagrid.ItemsSource = dataTable.DefaultView;
+        }
+
+        private void GetAppointmentsByHour()
+        {
+            MyConnection.CheckConnection();
+            DateTime todays_date = DateTime.Now.Date;
+            SqlCommand command_GetAppointmentsByTC = new SqlCommand("SELECT TOP 10 * FROM TableAppointment WHERE AppointmentDay=@pday ORDER BY AppointmentHour DESC", MyConnection.connection);
+            command_GetAppointmentsByTC.Parameters.AddWithValue("@pday", todays_date);
+            SqlDataAdapter dataAdapter = new SqlDataAdapter(command_GetAppointmentsByTC);
+            DataTable dataTable = new DataTable();
+            dataAdapter.Fill(dataTable);
+            datagrid.ItemsSource = dataTable.DefaultView;
+        }
+
+        int selected_appointment_id = 0;
+        string patient_tc = "";
+
+        private void datagrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            selected_appointment_id = ((datagrid.SelectedItem as DataRowView) == null) ? 0 : Convert.ToInt32((datagrid.SelectedItem as DataRowView)["AppointmentID"]);
+            patient_tc = ((datagrid.SelectedItem as DataRowView) == null) ? "" : (datagrid.SelectedItem as DataRowView)["AppointmentPatient"].ToString();
+            MessageBox.Show(patient_tc.ToString());
+        }
 
         private void upload()
         {
-           
+          
             // OAuth 2.0 kimlik doğrulaması
             UserCredential credential;
             using (var stream = new FileStream(credentialsPath, FileMode.Open, FileAccess.Read))
@@ -63,7 +95,7 @@ namespace Hospital_Management_System
             // Dosya metadata ve yükleme işlemi
             var fileMetadata = new Google.Apis.Drive.v3.Data.File()
             {
-                Name =patient_tc+appointment_date+clinic_id.ToString(),
+                Name = patient_tc+ DateTime.Now.Date.ToString("yyyy-MM-dd") + selected_appointment_id.ToString(),
                 MimeType = "image/jpeg"
             };
 
@@ -99,6 +131,7 @@ namespace Hospital_Management_System
         public UploadFile()
         {
             InitializeComponent();
+            GetAppointmentsByHour();
         }
 
         string selectedFilePath = "";
@@ -139,5 +172,24 @@ namespace Hospital_Management_System
 
             upload();
         }
+
+        private void tboxTC_KeyDown(object sender, KeyEventArgs e)
+        {
+            
+        }
+        // Sayfa ilk yüklendiğinde, en son eklenen 5 tane randevuyu ekrana alsın.
+        private void tboxTC_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (tboxTC.Text.Length==11)
+            {
+                GetAppointmentsByTC();
+            }
+            else
+            {
+                datagrid.Columns.Clear();
+            }
+        }
+
+      
     }
 }

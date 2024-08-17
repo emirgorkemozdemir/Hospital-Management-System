@@ -7,8 +7,10 @@
         mc:Ignorable="d"
         Title="UploadFile" Height="450" Width="800">
     <Grid>
-        <Button x:Name="btnUpload" Content="Upload File" HorizontalAlignment="Left" Margin="447,217,0,0" VerticalAlignment="Top" Height="47" Width="176" Click="btnUpload_Click"/>
-        <TextBox x:Name="tbox" HorizontalAlignment="Left" Margin="475,138,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="btnUpload" Content="Upload File" HorizontalAlignment="Left" Margin="585,83,0,0" VerticalAlignment="Top" Height="47" Width="176" Click="btnUpload_Click"/>
+        <TextBox x:Name="tbox" HorizontalAlignment="Left" Margin="613,36,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <DataGrid x:Name="datagrid" Margin="0,0,484,0" SelectionChanged="datagrid_SelectionChanged" />
+        <TextBox x:Name="tboxTC" HorizontalAlignment="Center" Margin="0,36,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" KeyDown="tboxTC_KeyDown" TextChanged="tboxTC_TextChanged"/>
 
     </Grid>
 </Window>
