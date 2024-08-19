@@ -39,17 +39,36 @@ namespace Hospital_Management_System
             // Giriş başarılıysa bu ifin içerisi çalışacak.
             if (data_reader.HasRows)
             {
+                int user_role = 0;
                 while (data_reader.Read())
                 {
                     LoggedUserInfos.LoggedUserID =Convert.ToInt32(data_reader[0]);
                     LoggedUserInfos.LoggedUserName = data_reader[1].ToString();
+                    user_role = Convert.ToInt32(data_reader[3]);
                 }
 
                 data_reader.Close();
+
+
                 // Ana sayfaya yönlendirme
-                Main new_window = new Main();
-                this.Hide();
-                new_window.Show();
+                if (user_role==1)
+                {
+                    DoctorPanel panel = new DoctorPanel();
+                    panel.Show();
+                    this.Hide();
+                }
+                else if (user_role == 2)
+                {
+                    Main panel = new Main();
+                    panel.Show();
+                    this.Hide();
+                }
+                else if (user_role == 3)
+                {
+                    UploadFile panel = new UploadFile();
+                    panel.Show();
+                    this.Hide();
+                }
             }
         }
     }
