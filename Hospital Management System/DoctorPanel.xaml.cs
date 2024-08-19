@@ -18,6 +18,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using OpenQA.Selenium.Support.UI;
 using System.Threading;
+using System.IO;
+using System.Net.Http;
 
 namespace Hospital_Management_System
 {
@@ -116,6 +118,51 @@ namespace Hospital_Management_System
             DeleteAppointment();
         }
 
+        static string ExtractSubstring(string url, string startMarker, string endMarker)
+        {
+            int startIndex = url.IndexOf(startMarker);
+            if (startIndex == -1)
+            {
+                return null;  // Başlangıç işareti bulunamadı
+            }
+
+            startIndex += startMarker.Length;  // Başlangıç işareti sonrasından başla
+            int endIndex = url.IndexOf(endMarker, startIndex);
+            if (endIndex == -1)
+            {
+                return null;  // Bitiş işareti bulunamadı
+            }
+
+            return url.Substring(startIndex, endIndex - startIndex);
+        }
+
+        private async Task DownloadFilesAsync(List<string> links)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                foreach (var link in links)
+                {
+                    try
+                    {
+                        var response = await client.GetAsync(link);
+                        response.EnsureSuccessStatusCode();
+
+                        var fileName = "image_" + Guid.NewGuid() + ".jpeg";
+                        var filePath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), fileName);
+
+                        await using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+                        {
+                            await response.Content.CopyToAsync(fileStream);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Failed to download {link}: {ex.Message}");
+                    }
+                }
+            }
+        }
+
         private async void btnDownload_Click(object sender, RoutedEventArgs e)
         {
             MyConnection.CheckConnection();
@@ -125,68 +172,15 @@ namespace Hospital_Management_System
             List<string> links = new List<string>();
             while (dataReader.Read())
             {
-                links.Add(dataReader[0].ToString());
+                string download_link = "https://drive.google.com/uc?export=download&id=" + ExtractSubstring(dataReader[0].ToString(), "/d/", "/v");
+                links.Add(download_link);
             }
 
             dataReader.Close();
 
-            using (IWebDriver driver = new ChromeDriver())
-            {
-                // İlk URL'yi aç (ilk sekme)
-                driver.Navigate().GoToUrl(links[0]);
-
-                // Diğer URL'leri yeni sekmelerde aç
-                for (int i = 1; i < links.Count; i++)
-                {
-                    // Yeni bir sekme aç ve ona geç
-                    ((IJavaScriptExecutor)driver).ExecuteScript("window.open();");
-                    driver.SwitchTo().Window(driver.WindowHandles[i]);
-
-                    // Yeni sekmede URL'yi aç
-                    driver.Navigate().GoToUrl(links[i]);
-                }
-
-
-                var task = Task.Run(() => MonitorBrowserClosure(driver));
-
-                Console.WriteLine("Tarayıcıyı kapatmak için Enter'a basın...");
-                Console.ReadLine();
-
-                // Kullanıcıdan giriş alındığında iptal sinyali gönder
-                driver.Quit(); // Tarayıcıyı kapat
-                await task; // Bekleme görevini sonlandır
-
-
-            }
-
-
-        }
-
-        static async Task MonitorBrowserClosure(IWebDriver driver)
-        {
-            try
-            {
-                var wait = new WebDriverWait(driver, TimeSpan.FromMinutes(10)); // Bekleme süresini ihtiyaca göre ayarlayın
-
-                wait.Until(drv =>
-                {
-                    try
-                    {
-                        return drv.WindowHandles.Count == 0;
-                    }
-                    catch (WebDriverException)
-                    {
-                        // Bağlantı kesilmişse, WebDriverException fırlatılır
-                        return true;
-                    }
-                });
-
-                Console.WriteLine("Tarayıcı kapalı veya bağlantı kesildi.");
-            }
-            catch (WebDriverTimeoutException)
-            {
-                Console.WriteLine("Bekleme süresi doldu ve tarayıcı hala açık.");
-            }
+           await DownloadFilesAsync(links);
+            MessageBox.Show("All Files Downloaded To Desktop!");
+            
         }
     }
 }
